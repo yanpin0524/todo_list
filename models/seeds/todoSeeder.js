@@ -17,5 +17,5 @@ db.once('open', () => {
     Todo.create({ name: `item_${i}` })
   }
 
-  console.log('done.')
+  console.log('種子資料載入完畢')
 })
