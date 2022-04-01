@@ -8,6 +8,12 @@ const todoSchema = new Schema({
   },
   isDone: {
     type: Boolean
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    required: true
   }
 })
 
