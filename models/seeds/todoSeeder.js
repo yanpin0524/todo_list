@@ -11,23 +11,27 @@ const SEED_USER = {
   password: '12345678'
 }
 db.once('open', () => {
-  bcrypt
-    .genSalt(10)
-    .then(salt => bcrypt.hash(SEED_USER.password, salt))
-    .then(hash => User.create({
-      name: SEED_USER.name,
-      email: SEED_USER.email,
-      password: hash
-    }))
-    .then(user => {
-      const userId = user._id
-      return Promise.all(Array.from(
-        { length: 10 },
-        (_, i) => Todo.create({ name: `name-${i}`, userId })
-      ))
-    })
-    .then(() => {
-      console.log('種子資料載入完畢')
-      process.exit()
-    })
+  User.findOne({ email: SEED_USER.email }).then(user => {
+    if(user) return user
+
+    return bcrypt
+      .genSalt(10)
+      .then(salt => bcrypt.hash(SEED_USER.password, salt))
+      .then(hash => User.create({
+        name: SEED_USER.name,
+        email: SEED_USER.email,
+        password: hash
+      }))
+  })
+  .then(user => {
+    const userId = user._id
+    return Promise.all(Array.from(
+      { length: 10 },
+      (_, i) => Todo.create({ name: `name-${i}`, userId })
+    ))
+  })
+  .then(() => {
+    console.log('種子資料載入完畢')
+    process.exit()
+  })
 })
